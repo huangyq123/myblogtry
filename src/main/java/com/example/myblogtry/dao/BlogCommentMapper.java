@@ -25,4 +25,6 @@ public interface BlogCommentMapper {
 
     List<BlogComment> findBlogCommentList(PageQueryUtil pageUtil);
 
+    int insertCommentWithBlogId(BlogComment blogComment);
+
 }

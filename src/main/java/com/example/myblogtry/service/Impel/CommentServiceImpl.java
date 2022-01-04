@@ -5,6 +5,7 @@ import com.example.myblogtry.entity.BlogComment;
 import com.example.myblogtry.service.CommentService;
 import com.example.myblogtry.utils.PageQueryUtil;
 import com.example.myblogtry.utils.PageResult;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -93,5 +94,14 @@ public class CommentServiceImpl implements CommentService {
             return pageResult;
         }
         return null;
+    }
+
+    @Override
+    public Boolean addComment(BlogComment blogComment) {
+        int result = blogCommentMapper.insertCommentWithBlogId(blogComment);
+        if(result>0){
+            return true;
+        }
+        return false;
     }
 }

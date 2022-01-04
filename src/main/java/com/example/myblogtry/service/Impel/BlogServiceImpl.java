@@ -230,4 +230,12 @@ public class BlogServiceImpl implements BlogService {
         }
         return null;
     }
+
+    @Override
+    public PageResult getBlogsByKeyword(PageQueryUtil pageQueryUtil) {
+        List<Blog> blogs = blogMapper.selectBlogsByKeyword(pageQueryUtil);
+        int total = blogs==null?0:blogs.size();
+        PageResult pageResult = new PageResult(blogs, total, pageQueryUtil.getLimit(), pageQueryUtil.getPage());
+        return pageResult;
+    }
 }

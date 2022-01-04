@@ -2,18 +2,17 @@ package com.example.myblogtry.controller.blog;
 
 import com.example.myblogtry.controller.vo.BlogDetailVO;
 import com.example.myblogtry.entity.Blog;
+import com.example.myblogtry.entity.BlogComment;
 import com.example.myblogtry.entity.BlogLink;
 import com.example.myblogtry.service.*;
-import com.example.myblogtry.utils.PageQueryUtil;
-import com.example.myblogtry.utils.PageResult;
+import com.example.myblogtry.utils.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -213,5 +212,102 @@ public class MyblogController {
             return "error/error_400";
         }
     }
+
+    @PostMapping ("/blog/comment")
+    @ResponseBody
+    public Result publishComment(HttpServletRequest request, HttpSession session,
+                                 @RequestParam Long blogId, @RequestParam String verifyCode,
+                                 @RequestParam String commentator, @RequestParam String email,
+                                 @RequestParam String websiteUrl, @RequestParam String commentBody){
+        //自己考虑的参数验证
+//        if(session.getAttribute("verifyCode")==null||!verifyCode.equals(session.getAttribute("verifyCode"))){
+//            return ResultGenerator.genFailResult("验证码错误");
+//        }
+
+        //项目的参数验证
+        if (StringUtils.isEmpty(verifyCode)) {
+            return ResultGenerator.genFailResult("验证码不能为空");
+        }
+        String kaptchaCode = session.getAttribute("verifyCode") + "";
+        if (StringUtils.isEmpty(kaptchaCode)) {
+            return ResultGenerator.genFailResult("非法请求");
+        }
+        if (!verifyCode.equals(kaptchaCode)) {
+            return ResultGenerator.genFailResult("验证码错误");
+        }
+        //这个干啥？？？
+        String ref = request.getHeader("Referer");
+        if (StringUtils.isEmpty(ref)) {
+            return ResultGenerator.genFailResult("非法请求");
+        }
+
+        if (null == blogId || blogId < 0) {
+            return ResultGenerator.genFailResult("非法请求");
+        }
+        if (StringUtils.isEmpty(commentator)) {
+            return ResultGenerator.genFailResult("请输入称呼");
+        }
+        if (StringUtils.isEmpty(email)) {
+            return ResultGenerator.genFailResult("请输入邮箱地址");
+        }
+        //邮箱格式的验证——怎么实现：使用正则匹配PatternUtil
+        if (!PatternUtil.isEmail(email)) {
+            return ResultGenerator.genFailResult("请输入正确的邮箱地址");
+        }
+        if (StringUtils.isEmpty(commentBody)) {
+            return ResultGenerator.genFailResult("请输入评论内容");
+        }
+        if (commentBody.trim().length() > 200) {
+            return ResultGenerator.genFailResult("评论内容过长");
+        }
+
+        BlogComment blogComment = new BlogComment();
+        blogComment.setBlogId(blogId);
+//        blogComment.setCommentator(commentator);
+//        blogComment.setWebsiteUrl(websiteUrl);
+//        blogComment.setCommentBody(commentBody);
+        blogComment.setEmail(email);
+
+        //项目的额外处理——特殊形式的文本验证；文本格式处理;
+        blogComment.setCommentator(MyBlogUtils.cleanString(commentator));
+        if (PatternUtil.isURL(websiteUrl)) {
+            blogComment.setWebsiteUrl(websiteUrl);
+        }
+        blogComment.setCommentBody(MyBlogUtils.cleanString(commentBody));
+
+        Boolean aBoolean = commentService.addComment(blogComment);
+        if(aBoolean){
+            return ResultGenerator.genSuccessResult();
+        }else {
+            return ResultGenerator.genFailResult("评论失败");
+        }
+
+    }
+
+    @GetMapping("/search/{keyword}")
+    public String searchBlog(@PathVariable("keyword") String keyword,HttpServletRequest request){
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("keyword",keyword);
+        map.put("page",1);
+        map.put("limit",5);
+        PageQueryUtil pageQueryUtil = new PageQueryUtil(map);
+
+        PageResult blogsByKeyword = blogService.getBlogsByKeyword(pageQueryUtil);
+
+        request.setAttribute("blogPageResult",blogsByKeyword);
+
+        request.setAttribute("hotTags",tagService.getBlogTagCountForIndex());
+
+        map.put("lengthOfbLogs",5);
+        request.setAttribute("newBlogs",blogService.getBlogSortByTime(pageQueryUtil));
+
+        request.setAttribute("hotBlogs",blogService.getBlogSortByViews(pageQueryUtil));
+
+        request.setAttribute("configurations",configService.getConfigList());
+
+        return "blog/amaze/index";
+    }
+
+
 
 }

@@ -34,4 +34,5 @@ public interface BlogMapper {
 
     Blog selectBySubUrl(String subUrl);
 
+    List<Blog> selectBlogsByKeyword(PageQueryUtil pageQueryUtil);
 }

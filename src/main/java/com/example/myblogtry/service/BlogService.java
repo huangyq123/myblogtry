@@ -35,4 +35,6 @@ public interface BlogService {
     PageResult getBlogPageByCategoryName(int page,String categoryName);
 
     BlogDetailVO getBlogDetailBySubUrl(String subUrl);
+
+    PageResult getBlogsByKeyword(PageQueryUtil pageQueryUtil);
 }

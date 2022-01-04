@@ -346,5 +346,12 @@
         where blog_sub_url = #{subUrl,jdbcType=VARCHAR} and is_deleted = 0 limit 1
     </select>
 
+    <select id="selectBlogsByKeyword" resultMap="baseBlogMap" parameterType="Map">
+        select * from tb_blog
+        <if test="keyword!=null">
+            where blog_title like concat('%',#{keyword,jdbcType=VARCHAR},'%') or blog_category_name like concat('%',#{keyword,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
 
 </mapper>

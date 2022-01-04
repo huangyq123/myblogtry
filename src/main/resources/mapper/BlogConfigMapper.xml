@@ -9,6 +9,19 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
 
+    <update id="updateConfigByPrimaryKey" parameterType="com.example.myblogtry.entity.BlogConfig">
+        update tb_config
+        <set>
+            <if test="configValue!=null">
+                config_value=#{configValue,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime!=null">
+                update_time=#{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+            where config_name=#{configName}
+    </update>
+
     <select id="findConfigAll" resultMap="baseConfigMap">
         select * from tb_config
     </select>

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -82,5 +83,16 @@ public class ConfigServiceImpl implements ConfigService {
             }
         }
         return configMap;
+    }
+
+    @Override
+    public int updateConfig(String configName,String configValue) {
+        BlogConfig blogConfig = new BlogConfig();
+        blogConfig.setConfigName(configName);
+        blogConfig.setConfigValue(configValue);
+        blogConfig.setUpdateTime(new Date());
+
+       return blogConfigMapper.updateConfigByPrimaryKey(blogConfig);
+
     }
 }

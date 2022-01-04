@@ -11,5 +11,6 @@ public interface ConfigService {
 
     Map<String, String> getConfigList();
 
+    int updateConfig(String configName,String configValue);
 
 }
