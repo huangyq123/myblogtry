@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.myblogtry.dao.BlogCategoryMapper">
+    
+    <resultMap id="BaseResultMap" type="com.example.myblogtry.entity.BlogCategory">
+        <id property="categoryId" column="category_id"></id>
+        <result property="categoryIcon" column="category_icon"></result>
+        <result property="categoryName" column="category_name"></result>
+        <result property="categoryRank" column="category_rank"></result>
+        <result property="isDeleted" column="is_deleted"></result>
+        <result property="createTime" column="create_time"></result>
+    </resultMap>
+    <insert id="insertSelective" parameterType="com.example.myblogtry.entity.BlogCategory">
+        insert into tb_blog_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="categoryName != null">
+                category_name,
+            </if>
+            <if test="categoryIcon != null">
+                category_icon,
+            </if>
+            <if test="categoryRank != null">
+                category_rank,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">
+                #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="categoryName != null">
+                #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryIcon != null">
+                #{categoryIcon,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryRank != null">
+                #{categoryRank,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="deleteSelective">
+        update tb_blog_category
+        set is_deleted=1 where category_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.myblogtry.entity.BlogCategory">
+        update tb_blog_category
+        <set>
+            <if test="categoryName != null">
+                category_name = #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryIcon != null">
+                category_icon = #{categoryIcon,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryRank != null">
+                category_rank = #{categoryRank,jdbcType=INTEGER},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where category_id = #{categoryId,jdbcType=INTEGER}
+    </update>
+
+    <select id="findCategoryList" resultMap="BaseResultMap">
+        select
+        *
+        from tb_blog_category
+        where is_deleted=0
+        order by category_rank desc,create_time desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+    <select id="selectByCategoryName" resultMap="BaseResultMap">
+        select * from tb_blog_category where category_name=#{categoryName}
+    </select>
+    <select id="selectByCategoryId" resultMap="BaseResultMap">
+        select * from tb_blog_category where category_id=#{categoryId}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select * from tb_blog_category where is_deleted=0;
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select * from tb_blog_category
+        <if test="blogCategoryId!=null">
+            where category_id=#{blogCategoryId}
+        </if>
+    </select>
+
+</mapper>

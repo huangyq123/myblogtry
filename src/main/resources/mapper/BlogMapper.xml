@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.myblogtry.dao.BlogMapper">
+
+    <resultMap id="baseBlogMap" type="com.example.myblogtry.entity.Blog">
+        <id property="blogId" column="blog_id"></id>
+        <result property="isDeleted" column="is_deleted"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="blogCategoryId" column="blog_category_id"></result>
+        <result property="blogCategoryName" column="blog_category_name"></result>
+        <result property="blogContent" column="blog_content"></result>
+        <result property="blogCoverImage" column="blog_cover_image"></result>
+        <result property="blogStatus" column="blog_status"></result>
+        <result property="blogSubUrl" column="blog_sub_url"></result>
+        <result property="blogTags" column="blog_tags"></result>
+        <result property="blogTitle" column="blog_title"></result>
+        <result property="blogViews" column="blog_views"></result>
+        <result property="enableComment" column="enable_comment"></result>
+        <result property="updateTime" column="update_time"></result>
+    </resultMap>
+
+    <resultMap id="baseBlogDetailVOMap" type="com.example.myblogtry.controller.vo.BlogDetailVO">
+        <id property="blogId" column="blog_id"></id>
+        <result property="createTime" column="create_time"></result>
+        <result property="blogCategoryId" column="blog_category_id"></result>
+        <result property="blogCategoryName" column="blog_category_name"></result>
+        <result property="blogContent" column="blog_content"></result>
+        <result property="blogCoverImage" column="blog_cover_image"></result>
+<!--        <result property="blogTags" column="blog_tags"></result>-->
+        <result property="blogTitle" column="blog_title"></result>
+        <result property="blogViews" column="blog_views"></result>
+        <result property="enableComment" column="enable_comment"></result>
+        <result property="blogCategoryIcon" column="blog_category_icon"></result>
+        <result property="commentCount" column="comment_count"></result>
+    </resultMap>
+
+    <resultMap extends="baseBlogMap" id="ResultMapWithBLOBs" type="com.example.myblogtry.entity.Blog">
+        <result column="blog_content" jdbcType="LONGVARCHAR" property="blogContent"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        blog_id, blog_title, blog_sub_url, blog_cover_image, blog_category_id, blog_category_name,
+    blog_tags, blog_status, blog_views, enable_comment, is_deleted, create_time, update_time
+    </sql>
+
+    <sql id="Base_Column_BlogCount_List">
+         blog_title, blog_cover_image, blog_category_id, blog_category_name,
+  blog_views, enable_comment,  create_time, blog_content
+    </sql>
+
+    <sql id="Blob_Column_List">
+        blog_content
+    </sql>
+
+<!--    <insert id="save" parameterType="com.example.myblogtry.entity.Blog">-->
+<!--        insert into tb_blog-->
+<!--        <trim prefix="(" suffix=")" suffixOverrides="," >-->
+<!--            <if test="blogId!=null">-->
+<!--                blog_id-->
+<!--            </if>-->
+
+<!--        </trim>-->
+<!--    </insert>-->
+
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="blogId"
+            parameterType="com.example.myblogtry.entity.Blog">
+        insert into tb_blog
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="blogId != null">
+                blog_id,
+            </if>
+            <if test="blogTitle != null">
+                blog_title,
+            </if>
+            <if test="blogSubUrl != null">
+                blog_sub_url,
+            </if>
+            <if test="blogCoverImage != null">
+                blog_cover_image,
+            </if>
+            <if test="blogCategoryId != null">
+                blog_category_id,
+            </if>
+            <if test="blogCategoryName != null">
+                blog_category_name,
+            </if>
+            <if test="blogTags != null">
+                blog_tags,
+            </if>
+            <if test="blogStatus != null">
+                blog_status,
+            </if>
+            <if test="blogViews != null">
+                blog_views,
+            </if>
+            <if test="enableComment != null">
+                enable_comment,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="blogContent != null">
+                blog_content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="blogId != null">
+                #{blogId,jdbcType=BIGINT},
+            </if>
+            <if test="blogTitle != null">
+                #{blogTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="blogSubUrl != null">
+                #{blogSubUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="blogCoverImage != null">
+                #{blogCoverImage,jdbcType=VARCHAR},
+            </if>
+            <if test="blogCategoryId != null">
+                #{blogCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="blogCategoryName != null">
+                #{blogCategoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="blogTags != null">
+                #{blogTags,jdbcType=VARCHAR},
+            </if>
+            <if test="blogStatus != null">
+                #{blogStatus,jdbcType=TINYINT},
+            </if>
+            <if test="blogViews != null">
+                #{blogViews,jdbcType=BIGINT},
+            </if>
+            <if test="enableComment != null">
+                #{enableComment,jdbcType=TINYINT},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="blogContent != null">
+                #{blogContent,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.myblogtry.entity.Blog">
+        update tb_blog
+        <set>
+            <if test="blogTitle != null">
+                blog_title=#{blogTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="blogSubUrl != null">
+                blog_sub_url=#{blogSubUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="blogCoverImage != null">
+                blog_cover_image=#{blogCoverImage,jdbcType=VARCHAR},
+            </if>
+            <if test="blogCategoryId != null">
+                blog_category_id=#{blogCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="blogCategoryName != null">
+                blog_category_name=#{blogCategoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="blogTags != null">
+                blog_tags=#{blogTags,jdbcType=VARCHAR},
+            </if>
+            <if test="blogStatus != null">
+                blog_status=#{blogStatus,jdbcType=TINYINT},
+            </if>
+            <if test="blogViews != null">
+                blog_views=#{blogViews,jdbcType=BIGINT},
+            </if>
+            <if test="enableComment != null">
+                enable_comment=#{enableComment,jdbcType=TINYINT},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted=#{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+               create_time=#{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="blogContent != null">
+                blog_content=#{blogContent,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+            where blog_id=#{blogId,jdbcType=BIGINT}
+    </update>
+
+    <update id="deleteByPrimaryKeys" >
+        update tb_blog
+        set is_deleted=1
+        where blog_id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.example.myblogtry.entity.Blog">
+        update tb_blog
+        <set>
+            <if test="blogTitle != null">
+                blog_title=#{blogTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="blogSubUrl != null">
+                blog_sub_url=#{blogSubUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="blogCoverImage != null">
+                blog_cover_image=#{blogCoverImage,jdbcType=VARCHAR},
+            </if>
+            <if test="blogCategoryId != null">
+                blog_category_id=#{blogCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="blogCategoryName != null">
+                blog_category_name=#{blogCategoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="blogTags != null">
+                blog_tags=#{blogTags,jdbcType=VARCHAR},
+            </if>
+            <if test="blogStatus != null">
+                blog_status=#{blogStatus,jdbcType=TINYINT},
+            </if>
+            <if test="blogViews != null">
+                blog_views=#{blogViews,jdbcType=BIGINT},
+            </if>
+            <if test="enableComment != null">
+                enable_comment=#{enableComment,jdbcType=TINYINT},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted=#{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time=#{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="blogContent != null">
+                blog_content=#{blogContent,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where blog_id=#{blogId,jdbcType=BIGINT}
+    </update>
+
+    <!--    <select id="findBlogList" resultMap="baseBlogMap" parameterType="Map">-->
+<!--        select * from tb_blog where is_deleted=0-->
+<!--        <if test="start!=null and limit!=null">-->
+<!--            limit #{start},#{limit}-->
+<!--        </if>-->
+<!--    </select>-->
+
+    <select id="findBlogList" parameterType="Map" resultMap="baseBlogMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_blog
+        where is_deleted=0
+        <if test="keyword!=null">
+            AND (blog_title like CONCAT('%',#{keyword},'%' ) or blog_category_name like CONCAT('%',#{keyword},'%' ))
+        </if>
+        <if test="blogStatus!=null">
+            AND blog_status = #{blogStatus}
+        </if>
+        <if test="blogCategoryId!=null">
+            AND blog_category_id = #{blogCategoryId}
+        </if>
+        order by blog_id desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="baseBlogMap">
+        select * from tb_blog where blog_id=#{id} and is_deleted=0
+    </select>
+
+    <select id="findNewestBlog" resultMap="baseBlogMap" parameterType="Map">
+        select * from tb_blog where is_deleted=0 and blog_status=1
+        order by update_time desc
+        <if test="lengthOfBlogs!=null">
+            limit #{lengthOfBlogs}
+        </if>
+    </select>
+
+    <select id="findMostViewsBlog" resultMap="baseBlogMap" parameterType="Map">
+        select * from tb_blog where is_deleted=0 and blog_status=1
+        order by blog_views desc
+        <if test="lengthOfBlogs!=null">
+            limit #{lengthOfBlogs}
+        </if>
+    </select>
+
+    <select id="findBlogDetailVOById" resultMap="baseBlogDetailVOMap">
+        SELECT t4.category_icon as blog_category_icon,t3.* FROM
+            (SELECT tb_blog.blog_id,<include refid="Base_Column_BlogCount_List"></include>,t2.comment_count
+                from tb_blog
+                LEFT JOIN (SELECT blog_id,COUNT(*) AS comment_count FROM tb_blog_comment GROUP BY blog_id) AS t2
+                ON t2.blog_id=tb_blog.blog_id ) t3
+                    LEFT JOIN tb_blog_category AS t4
+                    ON t3.blog_category_id=t4.`category_id`
+                    WHERE t3.`blog_id`=4
+    </select>
+
+    <select id="selectBlogByTagName" resultMap="baseBlogMap" parameterType="Map">
+        select * from tb_blog where tb_blog.blog_id in
+                                        (select blog_id from tb_blog_tag_relation where tb_blog_tag_relation.tag_id in
+                                                                                        (select tag_id from tb_blog_tag
+                                                                                        <if test="tagName!=null">
+                                                                                            where tag_name=#{tagName}
+                                                                                        </if>))
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="selectBlogByCategoryName" resultMap="baseBlogMap" parameterType="Map">
+        select * from tb_blog where is_deleted=0
+        <if test="categoryName!=null">
+            and blog_category_name = #{categoryName}
+        </if>
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="selectBySubUrl" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from tb_blog
+        where blog_sub_url = #{subUrl,jdbcType=VARCHAR} and is_deleted = 0 limit 1
+    </select>
+
+
+</mapper>

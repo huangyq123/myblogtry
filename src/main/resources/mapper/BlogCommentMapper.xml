@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.myblogtry.dao.BlogCommentMapper">
+
+    <resultMap id="baseCommentMap" type="com.example.myblogtry.entity.BlogComment">
+        <id property="commentId" column="comment_id"></id>
+        <result property="commentator" column="commentator"></result>
+        <result property="commentatorIp" column="commentator_ip"></result>
+        <result property="commentBody" column="comment_body"></result>
+        <result property="blogId" column="blog_id"></result>
+        <result property="commentCreateTime" column="comment_create_time"></result>
+        <result property="email" column="email"></result>
+        <result property="replyBody" column="reply_body"></result>
+        <result property="replyCreateTime" column="reply_create_time"></result>
+        <result property="commentStatus" column="comment_status"></result>
+        <result property="websiteUrl" column="website_url"></result>
+        <result property="isDeleted" column="is_deleted"></result>
+    </resultMap>
+
+    <update id="updateCommentsStatusByPrimaryKey">
+        update tb_blog_comment set comment_status=1
+        where comment_id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateReplyBodyByPrimaryKey">
+        update tb_blog_comment set reply_body=#{replyBody} where comment_id=#{commentId}
+    </update>
+
+    <update id="deleteCommentsByPrimaryKey">
+        update tb_blog_comment set is_deleted=1 where comment_id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="findCommentList" resultMap="baseCommentMap">
+        select * from tb_blog_comment where is_deleted=0
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="baseCommentMap">
+        select * from tb_blog_comment where comment_id=#{id} and is_deleted=0
+    </select>
+
+    <select id="findCommentsByBlogId" resultMap="baseCommentMap" parameterType="Map">
+        select * from tb_blog_comment
+        <if test="blogId!=null">
+            where blog_id=#{blogId}
+        </if>
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="getTotalBlogComments" resultType="java.lang.Integer" parameterType="Map">
+        select count(*) from tb_blog_comment
+        where is_deleted=0
+        <if test="blogId!=null">
+            and blog_id=#{blogId}
+        </if>
+        <if test="commentStatus!=null">
+            and comment_status=#{commentStatus}
+        </if>
+    </select>
+
+    <select id="findBlogCommentList" resultMap="baseCommentMap" parameterType="Map">
+        select * from tb_blog_comment
+        where is_deleted=0
+        <if test="blogId!=null">
+            and blog_id=#{blogId}
+        </if>
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+</mapper>

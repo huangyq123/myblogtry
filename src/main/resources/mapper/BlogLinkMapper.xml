@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.myblogtry.dao.BlogLinkMapper">
+
+    <resultMap id="baseLinkMap" type="com.example.myblogtry.entity.BlogLink">
+        <id property="linkId" column="link_id"></id>
+        <result property="linkType" column="link_type"></result>
+        <result property="linkName" column="link_name"></result>
+        <result property="linkUrl" column="link_url"></result>
+        <result property="linkDescription" column="link_description"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="linkRank" column="link_rank"></result>
+        <result property="isDeleted" column="is_deleted"></result>
+    </resultMap>
+
+    <insert id="insertLink" parameterType="com.example.myblogtry.entity.BlogLink">
+        insert into tb_link
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="linkType!=null">
+                link_type,
+            </if>
+            <if test="linkName!=null">
+                link_name,
+            </if>
+            <if test="linkUrl!=null">
+                link_url,
+            </if>
+            <if test="linkDescription">
+                link_description,
+            </if>
+            <if test="linkRank!=null">
+                link_rank,
+            </if>
+            <if test="createTime!=null">
+                create_time,
+            </if>
+            <if test="isDeleted">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="linkType!=null">
+                #{linkType,jdbcType=TINYINT},
+            </if>
+            <if test="linkName!=null">
+                #{linkName,jdbcType=VARCHAR},
+            </if>
+            <if test="linkUrl!=null">
+                #{linkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="linkDescription!=null">
+                #{linkDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="linkRank!=null">
+                #{linkRank,jdbcType=INTEGER},
+            </if>
+            <if test="createTime!=null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDeleted!=null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectLinkLists" resultMap="baseLinkMap" parameterType="Map">
+        select * from tb_link where is_deleted=0
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.myblogtry.dao.AdminUserMapper">
+
+    <resultMap id="AdminUserMap" type="com.example.myblogtry.entity.AdminUser">
+        <id property="adminUserId" column="admin_user_id"></id>
+        <result property="loginPassword" column="login_password"></result>
+        <result property="loginUserName" column="login_user_name"></result>
+        <result property="nickName" column="nick_name"></result>
+        <result property="locked" column="locked"></result>
+    </resultMap>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.myblogtry.entity.AdminUser">
+        update tb_admin_user
+        <set>
+            <if test="loginUserName != null">
+                login_user_name = #{loginUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="loginPassword != null">
+                login_password = #{loginPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null">
+                nick_name = #{nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="locked != null">
+                locked = #{locked,jdbcType=TINYINT},
+            </if>
+        </set>
+        where admin_user_id = #{adminUserId,jdbcType=INTEGER}
+    </update>
+
+    <select id="login" resultMap="AdminUserMap">
+        select * from tb_admin_user where login_user_name=#{userName} and login_password=#{password}
+    </select>
+
+    <select id="loginForName" resultMap="AdminUserMap">
+        select * from tb_admin_user where login_user_name=#{userName}
+    </select>
+<!--注意映射方式，这里属性名和列名不同，不能直接用Type-->
+    <select id="selectByPrimaryKey" resultMap="AdminUserMap">
+        select * from tb_admin_user where admin_user_id=#{adminUserId}
+    </select>
+
+</mapper>
