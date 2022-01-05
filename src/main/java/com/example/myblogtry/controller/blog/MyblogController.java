@@ -1,7 +1,6 @@
 package com.example.myblogtry.controller.blog;
 
 import com.example.myblogtry.controller.vo.BlogDetailVO;
-import com.example.myblogtry.entity.Blog;
 import com.example.myblogtry.entity.BlogComment;
 import com.example.myblogtry.entity.BlogLink;
 import com.example.myblogtry.service.*;
@@ -209,7 +208,7 @@ public class MyblogController {
             request.setAttribute("configurations", configService.getConfigList());
             return "blog/amaze/detail";
         } else {
-            return "error/error_400";
+            return "400";
         }
     }
 
